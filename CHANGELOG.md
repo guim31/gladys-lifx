@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-13
+
 ### Added
 
 - LIFX lights in Gladys, on the local network, with the official LIFX LAN
@@ -30,4 +32,5 @@ the notes of the version's GitHub Release.
   10 to 60 seconds to follow the changes made in the LIFX app.
 - English, French, German and Spanish everywhere, documentation included.
 
-[Unreleased]: https://github.com/guim31/gladys-lifx/commits/main
+[Unreleased]: https://github.com/guim31/gladys-lifx/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/guim31/gladys-lifx/releases/tag/v1.0.1

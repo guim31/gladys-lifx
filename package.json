@@ -1,6 +1,6 @@
 {
   "name": "gladys-lifx",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Gladys Assistant integration for LIFX lights, over the official LIFX LAN protocol.",
   "type": "module",
