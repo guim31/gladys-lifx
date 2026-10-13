@@ -1,0 +1,19 @@
+{
+  "_comment": "LIFX Beam on an old firmware: legacy multizone messages only",
+  "serial": "d073d5000007",
+  "product": 38,
+  "firmware": {
+    "major": 2,
+    "minor": 60
+  },
+  "label": "Beam",
+  "power": 65535,
+  "zones": 10,
+  "effect": 1,
+  "color": {
+    "hue": 0,
+    "saturation": 0,
+    "brightness": 65535,
+    "kelvin": 3500
+  }
+}

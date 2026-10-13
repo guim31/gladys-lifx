@@ -1,0 +1,17 @@
+{
+  "_comment": "LIFX (A19), colour, white range 1500-9000 K since firmware 2.80",
+  "serial": "d073d5000001",
+  "product": 27,
+  "firmware": {
+    "major": 2,
+    "minor": 80
+  },
+  "label": "Salon",
+  "power": 65535,
+  "color": {
+    "hue": 21845,
+    "saturation": 65535,
+    "brightness": 32768,
+    "kelvin": 3500
+  }
+}

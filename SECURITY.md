@@ -30,6 +30,21 @@ Gladys before reporting a problem.
 
 In scope: the code of this repository and the Docker image it publishes.
 
+What the integration handles:
+
+- **No secret.** The LIFX LAN protocol has no account, key nor password: the
+  configuration holds IP addresses, a refresh interval, a fade and a language.
+- **Stored in `/data`** (`lifx-state.json`): the LIFX lights seen, with their
+  IP address, port, serial number, product, firmware and label. Nothing else is
+  written, and nothing leaves the local network.
+- **Network**: UDP port 56700 towards the LIFX lights of the local network, in
+  unicast; the discovery broadcast is sent by the Gladys core on that port
+  only (declared in the manifest). The integration listens on no port of its
+  own and talks to no Internet service.
+- The LIFX LAN protocol itself is not authenticated: any device of the local
+  network can drive the lights the same way. That is a property of the LIFX
+  lights, not of this integration.
+
 Out of scope: Gladys Assistant itself (see its
 [security policy](https://github.com/GladysAssistant/Gladys/security/policy)),
-and the third-party services and devices the integration talks to.
+the LIFX lights, their firmware, the LIFX app and the LIFX cloud.

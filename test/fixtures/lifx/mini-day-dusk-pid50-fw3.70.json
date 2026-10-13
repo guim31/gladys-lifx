@@ -1,0 +1,17 @@
+{
+  "_comment": "LIFX Mini Day & Dusk: white 1500-9000 K from firmware 3.70",
+  "serial": "d073d5000004",
+  "product": 50,
+  "firmware": {
+    "major": 3,
+    "minor": 70
+  },
+  "label": "Chambre",
+  "power": 65535,
+  "color": {
+    "hue": 0,
+    "saturation": 0,
+    "brightness": 30000,
+    "kelvin": 2200
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "_comment": "LIFX Nightvision A19: colour and infrared",
+  "serial": "d073d5000005",
+  "product": 109,
+  "firmware": {
+    "major": 3,
+    "minor": 90
+  },
+  "label": "Jardin",
+  "power": 0,
+  "infrared": 32768,
+  "color": {
+    "hue": 0,
+    "saturation": 0,
+    "brightness": 65535,
+    "kelvin": 3500
+  }
+}
