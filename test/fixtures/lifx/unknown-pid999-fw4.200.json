@@ -1,0 +1,17 @@
+{
+  "_comment": "A product newer than the registry: handled as a colour light",
+  "serial": "d073d500000e",
+  "product": 999,
+  "firmware": {
+    "major": 4,
+    "minor": 200
+  },
+  "label": "Nouveau",
+  "power": 65535,
+  "color": {
+    "hue": 0,
+    "saturation": 0,
+    "brightness": 65535,
+    "kelvin": 3500
+  }
+}

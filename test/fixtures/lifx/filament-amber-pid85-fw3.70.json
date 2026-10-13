@@ -1,0 +1,17 @@
+{
+  "_comment": "LIFX Filament Amber: fixed white 2000 K",
+  "serial": "d073d500000b",
+  "product": 85,
+  "firmware": {
+    "major": 3,
+    "minor": 70
+  },
+  "label": "",
+  "power": 65535,
+  "color": {
+    "hue": 0,
+    "saturation": 0,
+    "brightness": 65535,
+    "kelvin": 2000
+  }
+}

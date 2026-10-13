@@ -1,0 +1,17 @@
+{
+  "_comment": "LIFX Mini W: fixed white 2700 K, brightness only",
+  "serial": "d073d5000003",
+  "product": 51,
+  "firmware": {
+    "major": 3,
+    "minor": 70
+  },
+  "label": "Couloir",
+  "power": 65535,
+  "color": {
+    "hue": 0,
+    "saturation": 0,
+    "brightness": 45000,
+    "kelvin": 2700
+  }
+}

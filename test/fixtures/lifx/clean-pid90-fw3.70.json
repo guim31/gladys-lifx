@@ -1,0 +1,17 @@
+{
+  "_comment": "LIFX Clean: colour bulb with HEV (the HEV cycle is not handled)",
+  "serial": "d073d500000c",
+  "product": 90,
+  "firmware": {
+    "major": 3,
+    "minor": 70
+  },
+  "label": "Cuisine",
+  "power": 65535,
+  "color": {
+    "hue": 0,
+    "saturation": 0,
+    "brightness": 65535,
+    "kelvin": 3500
+  }
+}

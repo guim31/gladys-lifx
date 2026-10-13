@@ -1,0 +1,19 @@
+{
+  "_comment": "LIFX Neon: extended multizone, white 1000-10000 K from firmware 4.148",
+  "serial": "d073d5000008",
+  "product": 141,
+  "firmware": {
+    "major": 4,
+    "minor": 148
+  },
+  "label": "Néon",
+  "power": 65535,
+  "zones": 48,
+  "effect": 0,
+  "color": {
+    "hue": 0,
+    "saturation": 0,
+    "brightness": 65535,
+    "kelvin": 3500
+  }
+}

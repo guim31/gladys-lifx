@@ -1,0 +1,19 @@
+{
+  "_comment": "LIFX Z: multizone, extended messages from firmware 2.77",
+  "serial": "d073d5000006",
+  "product": 32,
+  "firmware": {
+    "major": 2,
+    "minor": 77
+  },
+  "label": "Ruban TV",
+  "power": 65535,
+  "zones": 16,
+  "effect": 0,
+  "color": {
+    "hue": 43690,
+    "saturation": 65535,
+    "brightness": 65535,
+    "kelvin": 3500
+  }
+}

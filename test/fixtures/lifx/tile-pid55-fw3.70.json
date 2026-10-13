@@ -1,0 +1,18 @@
+{
+  "_comment": "LIFX Tile: matrix, chain",
+  "serial": "d073d5000009",
+  "product": 55,
+  "firmware": {
+    "major": 3,
+    "minor": 70
+  },
+  "label": "Tiles",
+  "power": 65535,
+  "effect": 2,
+  "color": {
+    "hue": 0,
+    "saturation": 0,
+    "brightness": 65535,
+    "kelvin": 3500
+  }
+}

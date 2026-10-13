@@ -1,0 +1,194 @@
+# LIFX
+
+Controle sus bombillas, tiras y matrices **LIFX** desde Gladys, **en la red
+local**, con el protocolo LAN oficial de LIFX: sin nube, sin cuenta, sin clave.
+
+> Desarrollada sin el hardware: sus comentarios son bienvenidos («Developed
+> without the hardware: feedback welcome»). La integración se escribió a partir
+> del protocolo público de LIFX y se probó con luces simuladas. Si algo no se
+> comporta como se describe, abra una incidencia:
+> https://github.com/guim31/gladys-lifx/issues
+
+Esta integración no está afiliada a LIFX.
+
+## Presentación
+
+- Cada luz LIFX se convierte en una luz de Gladys: encendido/apagado, brillo,
+  color, temperatura del blanco (en kelvin, dentro del rango de su modelo).
+- Las bombillas **Nightvision** tienen su nivel de **infrarrojo**.
+- Las **tiras** (Z, Beam, Neon, String, Permanent Outdoor…) y las **matrices**
+  (Tile, Candle, Ceiling, Spot, Path, Tube…) se controlan en conjunto
+  (encendido/apagado, brillo, un color para toda la luz) y tienen la lista de
+  sus efectos integrados.
+- Dos acciones de escena: **Hacer parpadear una luz LIFX** (una alerta de color
+  que termina sola) e **Iniciar un efecto LIFX** (Desplazamiento,
+  Transformación, Llama).
+- La conexión de cada luz se muestra y se guarda en el historial.
+
+## Requisitos
+
+- Gladys 5.1 o posterior.
+- Luces LIFX configuradas en la aplicación LIFX y conectadas a la misma red que
+  Gladys. La aplicación LIFX ya no hace falta después.
+- Las luces responden en el puerto UDP 56700. Gladys las encuentra con una
+  difusión en la red local: si Gladys y las luces están en redes distintas
+  (VLAN, Wi-Fi de invitados), introduzca sus direcciones IP en la
+  configuración.
+
+## Configuración
+
+1. Instale la integración (Integraciones → Instalar desde GitHub, o desde la
+   tienda).
+2. Abra la pestaña **Configuración**. Todos los campos son opcionales:
+   - **Direcciones IP de las luces LIFX**: solo para las luces que el
+     descubrimiento automático no encuentra, separadas por comas. Asígneles una
+     dirección fija en su router.
+   - **Intervalo de actualización**: frecuencia de lectura de cada luz (10, 15,
+     30 o 60 segundos, 15 por defecto), para seguir los cambios hechos desde la
+     aplicación LIFX, un asistente de voz o un interruptor de pared.
+   - **Transición**: un fundido para los cambios hechos desde Gladys (ninguno
+     por defecto, hasta 5 segundos).
+   - **Idioma de los nombres de las funciones**: el idioma de los nombres dados
+     a las funciones de las nuevas luces (francés por defecto).
+3. Abra la pestaña **Descubrir** y añada sus luces. Sus nombres son los de la
+   aplicación LIFX; puede cambiarlos en Gladys.
+
+El botón **Buscar luces LIFX** de la pestaña Configuración busca de nuevo las
+luces e indica las encontradas, con su dirección y su modelo.
+
+## Dispositivos y funciones
+
+Cada luz es un dispositivo de Gladys, identificado por su número de serie:
+conserva su historial, sus escenas y sus paneles cuando cambia su dirección IP.
+
+| Función                  | Luces                      | Qué hace                                                           |
+| ------------------------ | -------------------------- | ------------------------------------------------------------------ |
+| **Luz**                  | todas                      | encendido/apagado                                                  |
+| **Brillo**               | todas                      | de 0 a 100 %; 0 apaga la luz                                       |
+| **Color**                | luces de color             | el color; nunca cambia el brillo                                   |
+| **Temperatura de color** | luces con rango de blancos | el blanco en kelvin, dentro del rango del modelo y del firmware    |
+| **Infrarrojo**           | Nightvision                | de 0 a 100 % de la potencia infrarroja                             |
+| **Efecto LIFX**          | tiras y matrices           | **Ninguno**, los efectos de la luz, **Otro efecto** (solo lectura) |
+| **Conexión**             | todas                      | 1 cuando la luz responde, 0 si no (solo lectura)                   |
+
+Un color, un blanco o un brillo también encienden la luz. Una luz apagada toma
+primero su nuevo color y luego se enciende con un fundido: nunca muestra su
+color anterior. Un color o un blanco detienen el efecto en curso, que los
+taparía.
+
+El color se muestra mientras la luz muestra un color, la temperatura de color
+mientras muestra un blanco. Una luz que ya no responde (apagada en el
+interruptor de pared, corte de corriente) se muestra apagada, con **Conexión** a
+0 y la insignia «inaccesible».
+
+Los efectos de la lista **Efecto LIFX**: el **Desplazamiento** hace deslizar los
+colores de una tira; la **Transformación** mezcla colores y la **Llama** parpadea
+en una matriz. Desde la lista arrancan con sus ajustes por defecto; la acción
+de escena permite elegir la velocidad, la dirección y los colores. Un efecto
+iniciado desde la aplicación LIFX que la integración no inicia por sí misma
+(Cielo, Barrido de colores…) se muestra como **Otro efecto**.
+
+## Acciones de escena
+
+### Hacer parpadear una luz LIFX
+
+La luz parpadea o respira en un color varias veces y luego vuelve a lo que
+mostraba. Una luz apagada se enciende para el parpadeo y se apaga después, con
+su color. Pensado para alertas: una puerta que se quedó abierta, la lavadora
+que terminó, alguien en la puerta.
+
+- **Luz LIFX**: la luz.
+- **Color**: rojo, naranja, amarillo, verde, cian, azul, morado, rosa o blanco
+  (las bombillas blancas parpadean en blanco).
+- **Efecto**: **Parpadear** (encendido y apagado) o **Respirar** (suave).
+- **Duración de un ciclo**: de 0,25 a 5 segundos.
+- **Número de ciclos (1-50)**: 3 por defecto.
+
+Salida: **Duración del parpadeo (s)**, para esperar su fin en la escena.
+
+### Iniciar un efecto LIFX
+
+Enciende la luz e inicia un efecto integrado, que funciona hasta que se detiene
+(otro efecto, un color, un blanco o **Detener el efecto**).
+
+- **Efecto**: **Desplazamiento (tiras)**, **Transformación (matrices)**,
+  **Llama (matrices)** o **Detener el efecto**.
+- **Velocidad**: lenta, normal o rápida.
+- **Dirección (Desplazamiento)**: derecha o izquierda.
+- **Colores**: arcoíris, fuego, océano, bosque, pastel, o **Colores ya
+  mostrados (Desplazamiento)**. El desplazamiento los reparte a lo largo de la
+  tira antes de deslizarlos; la transformación los mezcla; la llama mantiene
+  sus colores.
+
+Salida: **Efecto en curso (move, morph, flame, none)**.
+
+## Por qué no hay widget
+
+La caja de luz de Gladys ya muestra y controla todo lo que hace una luz LIFX:
+encendido/apagado, brillo, color, blanco, infrarrojo y la lista de efectos. El
+parpadeo y los efectos con sus ajustes son acciones de escena, donde son útiles
+(alertas, ambientes). Un widget LIFX solo repetiría la caja de luz, así que no
+hay ninguno.
+
+## Ejemplos de escenas
+
+- **Puerta abierta**: cuando el sensor de la puerta sigue abierto 5 minutos →
+  **Hacer parpadear una luz LIFX**, la luz del salón, naranja, Parpadear,
+  1 segundo, 5 ciclos.
+- **Timbre**: cuando suena el timbre → **Hacer parpadear una luz LIFX**, la luz
+  del despacho, azul, Respirar, 0,5 segundos, 6 ciclos (una acción por cada luz
+  que deba avisar).
+- **Noche de cine**: a las 21 h, cuando se enciende la tele → **Iniciar un
+  efecto LIFX**, la tira de la tele, Desplazamiento, lenta, océano; y **Detener
+  el efecto** cuando se apaga.
+- **Luz apagada en el interruptor**: cuando la **Conexión** de una luz pasa a 0
+  durante 10 minutos → enviar el mensaje «la luz de la entrada no tiene
+  corriente».
+
+## Tráfico de red y límites del protocolo
+
+- El protocolo LIFX no envía nada por sí mismo: cada luz añadida a Gladys se
+  lee en el intervalo de actualización (uno o dos pequeños paquetes UDP, tres
+  para una tira o una matriz). LIFX pide a los clientes no pasar de 20 mensajes
+  por segundo y por luz: la integración envía un mensaje cada vez por luz, muy
+  por debajo.
+- Gladys solo recibe los valores que cambiaron, más los que no cambiaron cada
+  6 horas para que el historial siga al día.
+- Las luces se buscan de nuevo cada 15 minutos, para seguir sus cambios de
+  dirección y encontrar las nuevas.
+- La integración lee las luces con su propio temporizador: Gladys no las
+  consulta (los dispositivos se publican con `should_poll: false`).
+
+## Solución de problemas
+
+- **No se encuentra ninguna luz**: compruebe que las luces están configuradas
+  en la aplicación LIFX y en la misma red que Gladys. El descubrimiento
+  automático pasa por Gladys (Gladys 5.1 o posterior); en otra red, introduzca
+  las direcciones IP.
+- **Una luz está «inaccesible»**: está apagada en el interruptor de pared, o su
+  dirección cambió. La integración la vuelve a encontrar sola en la siguiente
+  búsqueda; asígnele una dirección fija en su router para evitarlo.
+- **Los cambios hechos en la aplicación LIFX llegan tarde**: llegan en la
+  siguiente lectura; elija un intervalo de actualización más corto.
+- **Un efecto no hace nada**: el Desplazamiento solo existe en las tiras, la
+  Transformación y la Llama en las matrices. El Desplazamiento con **Colores ya
+  mostrados (Desplazamiento)** en una tira de un solo color no muestra ningún
+  movimiento: elija una paleta.
+- **Registros**: la integración solo registra lo esencial (inicio, luces
+  encontradas, perdidas y recuperadas, errores). Para el detalle, ponga
+  `LOG_LEVEL=debug` en el contenedor.
+
+## Limitaciones
+
+- Desarrollada sin el hardware: el comportamiento con luces LIFX reales está
+  por confirmar.
+- Las tiras y las matrices se controlan en conjunto: sin color por zona.
+- El color mostrado para una tira o una matriz es el que la luz indica para
+  todo el dispositivo (su primera zona).
+- No gestionados: el LIFX Switch (relés y botones), el ciclo de limpieza HEV de
+  las bombillas LIFX Clean (la bombilla en sí funciona como una luz de color),
+  los efectos Cielo y Barrido de colores (mostrados como **Otro efecto**), la
+  nube LIFX y las escenas de la aplicación LIFX.
+- Un producto más reciente que la lista de productos de la integración se
+  gestiona como una luz de color con un rango de blancos de 1500 a 9000 K,
+  hasta una actualización.

@@ -1,177 +1,768 @@
 {
   "manifest_version": 1,
   "type": "device",
-  "name": "Demo Devices Template",
+  "name": "LIFX",
   "description": {
-    "en": "Starter template showing sensors, a switch, a dimmable light and a smart plug.",
-    "fr": "Template de démarrage : capteurs, interrupteur, lampe variable et prise connectée."
+    "en": "LIFX bulbs, strips and matrices on the local network: colors, whites, effects, pulse.",
+    "fr": "Ampoules, rubans et matrices LIFX en réseau local : couleurs, blancs, effets, clignotement.",
+    "de": "LIFX-Lampen, -Streifen und -Matrizen im lokalen Netzwerk: Farben, Weißtöne, Effekte, Blinken.",
+    "es": "Bombillas, tiras y matrices LIFX en la red local: colores, blancos, efectos, parpadeo."
   },
   "version": "1.0.0",
-  "docker_image": "ghcr.io/gladysassistant/integration-template-js:1.0.0",
+  "docker_image": "ghcr.io/guim31/gladys-lifx:1.0.0",
   "gladys_version": ">=5.1.0",
-  "cover_image": "https://raw.githubusercontent.com/GladysAssistant/integration-template-js/master/cover.png",
-  "categories": ["lighting", "security", "environment"],
-  "transports": ["local", "cloud"],
+  "cover_image": "https://raw.githubusercontent.com/guim31/gladys-lifx/main/cover.png",
+  "categories": ["lighting"],
+  "transports": ["local"],
+  "network_discovery": [
+    {
+      "type": "udp-active-broadcast",
+      "ports": [56700]
+    }
+  ],
   "config_schema": [
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Getting started", "fr": "Pour commencer" },
+      "label": {
+        "en": "Finding your LIFX lights",
+        "fr": "Trouver vos lampes LIFX",
+        "de": "Deine LIFX-Lampen finden",
+        "es": "Encontrar sus luces LIFX"
+      },
       "description": {
-        "en": "The demo weather station reads real data from the free Open-Meteo API: pick the coordinates to observe. No account, no API key.",
-        "fr": "La station météo de démonstration lit de vraies données via l'API gratuite Open-Meteo : choisissez les coordonnées à observer. Pas de compte, pas de clé d'API."
+        "en": "LIFX lights on the same network as Gladys are found automatically: open the Discovery tab. Set them up in the LIFX app first. If one is missing, enter its IP address below.",
+        "fr": "Les lampes LIFX du même réseau que Gladys sont trouvées automatiquement : ouvrez l'onglet Découverte. Configurez-les d'abord dans l'application LIFX. S'il en manque une, saisissez son adresse IP ci-dessous.",
+        "de": "LIFX-Lampen im selben Netzwerk wie Gladys werden automatisch gefunden: Öffne den Tab „Entdecken“. Richte sie zuerst in der LIFX-App ein. Fehlt eine, gib unten ihre IP-Adresse ein.",
+        "es": "Las luces LIFX de la misma red que Gladys se encuentran automáticamente: abra la pestaña Descubrir. Configúrelas primero en la aplicación LIFX. Si falta alguna, introduzca su dirección IP a continuación."
       },
       "links": [
         {
-          "url": "https://open-meteo.com/en/docs",
-          "label": { "en": "Open-Meteo documentation", "fr": "Documentation Open-Meteo" }
+          "url": "https://github.com/guim31/gladys-lifx/blob/main/docs/en.md",
+          "label": {
+            "en": "Setup guide",
+            "fr": "Guide d'installation",
+            "de": "Installationsanleitung",
+            "es": "Guía de instalación"
+          }
         }
       ]
     },
     {
-      "key": "latitude",
-      "type": "number",
-      "label": { "en": "Latitude", "fr": "Latitude" },
-      "description": {
-        "en": "Latitude used for the demo weather sensor.",
-        "fr": "Latitude utilisée par le capteur météo de démonstration."
+      "key": "hosts",
+      "type": "string",
+      "label": {
+        "en": "IP addresses of LIFX lights",
+        "fr": "Adresses IP des lampes LIFX",
+        "de": "IP-Adressen der LIFX-Lampen",
+        "es": "Direcciones IP de las luces LIFX"
       },
-      "placeholder": { "en": "e.g. 48.8566", "fr": "ex. 48.8566" },
-      "required": true,
-      "default": 48.8566,
-      "min": -90,
-      "max": 90
-    },
-    {
-      "key": "longitude",
-      "type": "number",
-      "label": { "en": "Longitude", "fr": "Longitude" },
       "description": {
-        "en": "Longitude used for the demo weather sensor.",
-        "fr": "Longitude utilisée par le capteur météo de démonstration."
+        "en": "Optional, separated by commas. Only needed for the lights automatic discovery does not find.",
+        "fr": "Facultatif, séparées par des virgules. Seulement pour les lampes que la découverte automatique ne trouve pas.",
+        "de": "Optional, durch Kommas getrennt. Nur für Lampen nötig, die die automatische Erkennung nicht findet.",
+        "es": "Opcional, separadas por comas. Solo para las luces que el descubrimiento automático no encuentra."
       },
-      "placeholder": { "en": "e.g. 2.3522", "fr": "ex. 2.3522" },
-      "required": true,
-      "default": 2.3522,
-      "min": -180,
-      "max": 180
-    },
-    {
-      "key": "unit",
-      "type": "select",
-      "label": { "en": "Temperature unit", "fr": "Unité de température" },
+      "placeholder": {
+        "en": "e.g. 192.168.1.50, 192.168.1.51",
+        "fr": "ex. 192.168.1.50, 192.168.1.51",
+        "de": "z. B. 192.168.1.50, 192.168.1.51",
+        "es": "p. ej. 192.168.1.50, 192.168.1.51"
+      },
       "required": false,
-      "default": "celsius",
+      "default": ""
+    },
+    {
+      "key": "poll_interval",
+      "type": "select",
+      "label": {
+        "en": "Refresh interval",
+        "fr": "Intervalle d'actualisation",
+        "de": "Aktualisierungsintervall",
+        "es": "Intervalo de actualización"
+      },
+      "description": {
+        "en": "How often each light is read, to follow the changes made from the LIFX app, a voice assistant or a wall switch.",
+        "fr": "Fréquence de lecture de chaque lampe, pour suivre les changements faits depuis l'application LIFX, un assistant vocal ou un interrupteur mural.",
+        "de": "Wie oft jede Lampe gelesen wird, um Änderungen aus der LIFX-App, über einen Sprachassistenten oder einen Wandschalter zu verfolgen.",
+        "es": "Frecuencia de lectura de cada luz, para seguir los cambios hechos desde la aplicación LIFX, un asistente de voz o un interruptor de pared."
+      },
+      "required": false,
+      "default": "15",
       "options": [
-        { "value": "celsius", "label": { "en": "Celsius", "fr": "Celsius" } },
-        { "value": "fahrenheit", "label": { "en": "Fahrenheit", "fr": "Fahrenheit" } }
+        {
+          "value": "10",
+          "label": {
+            "en": "10 seconds",
+            "fr": "10 secondes",
+            "de": "10 Sekunden",
+            "es": "10 segundos"
+          }
+        },
+        {
+          "value": "15",
+          "label": {
+            "en": "15 seconds",
+            "fr": "15 secondes",
+            "de": "15 Sekunden",
+            "es": "15 segundos"
+          }
+        },
+        {
+          "value": "30",
+          "label": {
+            "en": "30 seconds",
+            "fr": "30 secondes",
+            "de": "30 Sekunden",
+            "es": "30 segundos"
+          }
+        },
+        {
+          "value": "60",
+          "label": {
+            "en": "60 seconds",
+            "fr": "60 secondes",
+            "de": "60 Sekunden",
+            "es": "60 segundos"
+          }
+        }
       ]
     },
     {
-      "key": "poll_frequency",
-      "type": "number",
-      "label": { "en": "Refresh interval (s)", "fr": "Intervalle de rafraîchissement (s)" },
+      "key": "transition",
+      "type": "select",
+      "label": {
+        "en": "Transition",
+        "fr": "Transition",
+        "de": "Übergang",
+        "es": "Transición"
+      },
       "description": {
-        "en": "How often sensors are polled, in seconds (one minute minimum).",
-        "fr": "Fréquence d'interrogation des capteurs, en secondes (une minute minimum)."
+        "en": "Fade of the changes made from Gladys: on, off, brightness, color and white.",
+        "fr": "Fondu des changements faits depuis Gladys : allumage, extinction, luminosité, couleur et blanc.",
+        "de": "Überblendung der Änderungen aus Gladys: Ein, Aus, Helligkeit, Farbe und Weißton.",
+        "es": "Fundido de los cambios hechos desde Gladys: encendido, apagado, brillo, color y blanco."
       },
       "required": false,
-      "default": 300,
-      "min": 60,
-      "max": 3600
+      "default": "0",
+      "options": [
+        {
+          "value": "0",
+          "label": {
+            "en": "None (instant)",
+            "fr": "Aucune (immédiat)",
+            "de": "Keiner (sofort)",
+            "es": "Ninguna (inmediato)"
+          }
+        },
+        {
+          "value": "250",
+          "label": {
+            "en": "0.25 seconds",
+            "fr": "0,25 seconde",
+            "de": "0,25 Sekunden",
+            "es": "0,25 segundos"
+          }
+        },
+        {
+          "value": "500",
+          "label": {
+            "en": "0.5 seconds",
+            "fr": "0,5 seconde",
+            "de": "0,5 Sekunden",
+            "es": "0,5 segundos"
+          }
+        },
+        {
+          "value": "1000",
+          "label": {
+            "en": "1 second",
+            "fr": "1 seconde",
+            "de": "1 Sekunde",
+            "es": "1 segundo"
+          }
+        },
+        {
+          "value": "2000",
+          "label": {
+            "en": "2 seconds",
+            "fr": "2 secondes",
+            "de": "2 Sekunden",
+            "es": "2 segundos"
+          }
+        },
+        {
+          "value": "5000",
+          "label": {
+            "en": "5 seconds",
+            "fr": "5 secondes",
+            "de": "5 Sekunden",
+            "es": "5 segundos"
+          }
+        }
+      ]
+    },
+    {
+      "key": "language",
+      "type": "select",
+      "label": {
+        "en": "Language of the feature names",
+        "fr": "Langue des noms des fonctionnalités",
+        "de": "Sprache der Funktionsnamen",
+        "es": "Idioma de los nombres de las funciones"
+      },
+      "description": {
+        "en": "Names given to the features of new lights (Light, Brightness, LIFX effect...). The light names come from the LIFX app.",
+        "fr": "Noms donnés aux fonctionnalités des nouvelles lampes (Éclairage, Luminosité, Effet LIFX…). Les noms des lampes viennent de l'application LIFX.",
+        "de": "Namen, die den Funktionen neuer Lampen gegeben werden (Licht, Helligkeit, LIFX-Effekt…). Die Lampennamen kommen aus der LIFX-App.",
+        "es": "Nombres dados a las funciones de las nuevas luces (Luz, Brillo, Efecto LIFX…). Los nombres de las luces vienen de la aplicación LIFX."
+      },
+      "required": false,
+      "default": "fr",
+      "options": [
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "Anglais",
+            "de": "Englisch",
+            "es": "Inglés"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "French",
+            "fr": "Français",
+            "de": "Französisch",
+            "es": "Francés"
+          }
+        },
+        {
+          "value": "de",
+          "label": {
+            "en": "German",
+            "fr": "Allemand",
+            "de": "Deutsch",
+            "es": "Alemán"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Spanish",
+            "fr": "Espagnol",
+            "de": "Spanisch",
+            "es": "Español"
+          }
+        }
+      ]
     }
   ],
   "actions": [
     {
-      "key": "test_weather",
-      "label": { "en": "Test the weather provider", "fr": "Tester le fournisseur météo" },
-      "timeout_seconds": 30
-    },
-    {
-      "key": "identify",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "fields": [
-        {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
-        }
-      ]
-    }
-  ],
-  "scene_triggers": [
-    {
-      "key": "motion_detected",
-      "label": { "en": "Motion detected", "fr": "Mouvement détecté" },
-      "description": {
-        "en": "A demo motion sensor saw a person or an animal move.",
-        "fr": "Un détecteur de démonstration a vu bouger une personne ou un animal."
+      "key": "search",
+      "label": {
+        "en": "Search for LIFX lights",
+        "fr": "Rechercher les lampes LIFX",
+        "de": "LIFX-Lampen suchen",
+        "es": "Buscar luces LIFX"
       },
-      "fields": [
-        {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Sensor", "fr": "Détecteur" }
-        },
-        {
-          "key": "target",
-          "type": "multi_select",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" },
-          "options": [
-            { "value": "person", "label": { "en": "Person", "fr": "Personne" } },
-            { "value": "animal", "label": { "en": "Animal", "fr": "Animal" } }
-          ]
-        }
-      ],
-      "variables": [
-        {
-          "key": "target",
-          "type": "string",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" }
-        }
-      ]
+      "description": {
+        "en": "Looks for LIFX lights again and reports the ones found.",
+        "fr": "Recherche à nouveau les lampes LIFX et liste celles trouvées.",
+        "de": "Sucht erneut nach LIFX-Lampen und listet die gefundenen auf.",
+        "es": "Busca de nuevo las luces LIFX e indica las encontradas."
+      },
+      "timeout_seconds": 60
     }
   ],
   "scene_actions": [
     {
-      "key": "identify_device",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "description": {
-        "en": "Make a device signal itself (the demo light blinks).",
-        "fr": "Fait se signaler un appareil (la lampe de démonstration clignote)."
+      "key": "pulse",
+      "label": {
+        "en": "Pulse a LIFX light",
+        "fr": "Faire clignoter une lampe LIFX",
+        "de": "LIFX-Lampe blinken lassen",
+        "es": "Hacer parpadear una luz LIFX"
       },
-      "timeout_seconds": 15,
+      "description": {
+        "en": "Blinks or breathes in a color a number of times, then the light goes back to what it showed, off included. Made for alerts.",
+        "fr": "Clignote ou pulse dans une couleur un certain nombre de fois, puis la lampe revient à ce qu'elle affichait, éteinte comprise. Fait pour les alertes.",
+        "de": "Blinkt oder pulsiert einige Male in einer Farbe, danach zeigt die Lampe wieder ihren vorherigen Zustand, auch ausgeschaltet. Gedacht für Alarme.",
+        "es": "Parpadea o respira en un color varias veces y luego la luz vuelve a lo que mostraba, apagada incluida. Pensado para alertas."
+      },
+      "timeout_seconds": 20,
       "fields": [
         {
           "key": "device",
           "type": "select",
           "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
+          "label": {
+            "en": "LIFX light",
+            "fr": "Lampe LIFX",
+            "de": "LIFX-Lampe",
+            "es": "Luz LIFX"
+          },
           "required": true
+        },
+        {
+          "key": "color",
+          "type": "select",
+          "label": {
+            "en": "Color",
+            "fr": "Couleur",
+            "de": "Farbe",
+            "es": "Color"
+          },
+          "description": {
+            "en": "White bulbs pulse in white.",
+            "fr": "Les ampoules blanches clignotent en blanc.",
+            "de": "Weiße Lampen blinken in Weiß.",
+            "es": "Las bombillas blancas parpadean en blanco."
+          },
+          "required": false,
+          "default": "red",
+          "options": [
+            {
+              "value": "red",
+              "label": {
+                "en": "Red",
+                "fr": "Rouge",
+                "de": "Rot",
+                "es": "Rojo"
+              }
+            },
+            {
+              "value": "orange",
+              "label": {
+                "en": "Orange",
+                "fr": "Orange",
+                "de": "Orange",
+                "es": "Naranja"
+              }
+            },
+            {
+              "value": "yellow",
+              "label": {
+                "en": "Yellow",
+                "fr": "Jaune",
+                "de": "Gelb",
+                "es": "Amarillo"
+              }
+            },
+            {
+              "value": "green",
+              "label": {
+                "en": "Green",
+                "fr": "Vert",
+                "de": "Grün",
+                "es": "Verde"
+              }
+            },
+            {
+              "value": "cyan",
+              "label": {
+                "en": "Cyan",
+                "fr": "Cyan",
+                "de": "Cyan",
+                "es": "Cian"
+              }
+            },
+            {
+              "value": "blue",
+              "label": {
+                "en": "Blue",
+                "fr": "Bleu",
+                "de": "Blau",
+                "es": "Azul"
+              }
+            },
+            {
+              "value": "purple",
+              "label": {
+                "en": "Purple",
+                "fr": "Violet",
+                "de": "Lila",
+                "es": "Morado"
+              }
+            },
+            {
+              "value": "pink",
+              "label": {
+                "en": "Pink",
+                "fr": "Rose",
+                "de": "Rosa",
+                "es": "Rosa"
+              }
+            },
+            {
+              "value": "white",
+              "label": {
+                "en": "White",
+                "fr": "Blanc",
+                "de": "Weiß",
+                "es": "Blanco"
+              }
+            }
+          ]
+        },
+        {
+          "key": "mode",
+          "type": "select",
+          "label": {
+            "en": "Pulse",
+            "fr": "Effet",
+            "de": "Art",
+            "es": "Efecto"
+          },
+          "required": false,
+          "default": "blink",
+          "options": [
+            {
+              "value": "blink",
+              "label": {
+                "en": "Blink",
+                "fr": "Clignoter",
+                "de": "Blinken",
+                "es": "Parpadear"
+              }
+            },
+            {
+              "value": "breathe",
+              "label": {
+                "en": "Breathe",
+                "fr": "Respirer",
+                "de": "Atmen",
+                "es": "Respirar"
+              }
+            }
+          ]
+        },
+        {
+          "key": "period",
+          "type": "select",
+          "label": {
+            "en": "Length of one cycle",
+            "fr": "Durée d'un cycle",
+            "de": "Dauer eines Zyklus",
+            "es": "Duración de un ciclo"
+          },
+          "required": false,
+          "default": "1000",
+          "options": [
+            {
+              "value": "250",
+              "label": {
+                "en": "0.25 seconds",
+                "fr": "0,25 seconde",
+                "de": "0,25 Sekunden",
+                "es": "0,25 segundos"
+              }
+            },
+            {
+              "value": "500",
+              "label": {
+                "en": "0.5 seconds",
+                "fr": "0,5 seconde",
+                "de": "0,5 Sekunden",
+                "es": "0,5 segundos"
+              }
+            },
+            {
+              "value": "1000",
+              "label": {
+                "en": "1 second",
+                "fr": "1 seconde",
+                "de": "1 Sekunde",
+                "es": "1 segundo"
+              }
+            },
+            {
+              "value": "2000",
+              "label": {
+                "en": "2 seconds",
+                "fr": "2 secondes",
+                "de": "2 Sekunden",
+                "es": "2 segundos"
+              }
+            },
+            {
+              "value": "5000",
+              "label": {
+                "en": "5 seconds",
+                "fr": "5 secondes",
+                "de": "5 Sekunden",
+                "es": "5 segundos"
+              }
+            }
+          ]
+        },
+        {
+          "key": "cycles",
+          "type": "number",
+          "label": {
+            "en": "Number of cycles (1-50)",
+            "fr": "Nombre de cycles (1-50)",
+            "de": "Anzahl der Zyklen (1-50)",
+            "es": "Número de ciclos (1-50)"
+          },
+          "required": false,
+          "default": 3,
+          "min": 1,
+          "max": 50
         }
       ],
       "outputs": [
         {
-          "key": "signalled",
-          "type": "boolean",
-          "label": { "en": "Device signalled", "fr": "Appareil signalé" }
+          "key": "duration_seconds",
+          "type": "number",
+          "label": {
+            "en": "Duration of the pulse (s)",
+            "fr": "Durée du clignotement (s)",
+            "de": "Dauer des Blinkens (s)",
+            "es": "Duración del parpadeo (s)"
+          }
         }
       ]
-    }
-  ],
-  "widgets": [
+    },
     {
-      "key": "demo_status",
-      "label": { "en": "Demo status", "fr": "État de la démo" },
-      "description": {
-        "en": "Live temperature and plug power, plug connection and observed location.",
-        "fr": "Température et puissance en direct, connexion de la prise, position observée."
+      "key": "start_effect",
+      "label": {
+        "en": "Start a LIFX effect",
+        "fr": "Lancer un effet LIFX",
+        "de": "LIFX-Effekt starten",
+        "es": "Iniciar un efecto LIFX"
       },
-      "icon": "activity",
-      "action_timeout_seconds": 15
+      "description": {
+        "en": "Turns the light on and starts a built-in effect: Move on the strips, Morph or Flame on the matrices (Tile, Candle...). Runs until stopped.",
+        "fr": "Allume la lampe et lance un effet intégré : Défilement sur les rubans, Morphose ou Flamme sur les matrices (Tile, Candle…). Tourne jusqu'à l'arrêt.",
+        "de": "Schaltet die Lampe ein und startet einen eingebauten Effekt: Lauflicht auf den Streifen, Morph oder Flamme auf den Matrizen (Tile, Candle…). Läuft bis zum Stopp.",
+        "es": "Enciende la luz e inicia un efecto integrado: Desplazamiento en las tiras, Transformación o Llama en las matrices (Tile, Candle…). Funciona hasta que se detiene."
+      },
+      "timeout_seconds": 20,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "LIFX light",
+            "fr": "Lampe LIFX",
+            "de": "LIFX-Lampe",
+            "es": "Luz LIFX"
+          },
+          "required": true
+        },
+        {
+          "key": "effect",
+          "type": "select",
+          "label": {
+            "en": "Effect",
+            "fr": "Effet",
+            "de": "Effekt",
+            "es": "Efecto"
+          },
+          "required": true,
+          "options": [
+            {
+              "value": "move",
+              "label": {
+                "en": "Move (strips)",
+                "fr": "Défilement (rubans)",
+                "de": "Lauflicht (Streifen)",
+                "es": "Desplazamiento (tiras)"
+              }
+            },
+            {
+              "value": "morph",
+              "label": {
+                "en": "Morph (matrices)",
+                "fr": "Morphose (matrices)",
+                "de": "Morph (Matrizen)",
+                "es": "Transformación (matrices)"
+              }
+            },
+            {
+              "value": "flame",
+              "label": {
+                "en": "Flame (matrices)",
+                "fr": "Flamme (matrices)",
+                "de": "Flamme (Matrizen)",
+                "es": "Llama (matrices)"
+              }
+            },
+            {
+              "value": "stop",
+              "label": {
+                "en": "Stop the effect",
+                "fr": "Arrêter l'effet",
+                "de": "Effekt stoppen",
+                "es": "Detener el efecto"
+              }
+            }
+          ]
+        },
+        {
+          "key": "speed",
+          "type": "select",
+          "label": {
+            "en": "Speed",
+            "fr": "Vitesse",
+            "de": "Geschwindigkeit",
+            "es": "Velocidad"
+          },
+          "required": false,
+          "default": "normal",
+          "options": [
+            {
+              "value": "slow",
+              "label": {
+                "en": "Slow",
+                "fr": "Lente",
+                "de": "Langsam",
+                "es": "Lenta"
+              }
+            },
+            {
+              "value": "normal",
+              "label": {
+                "en": "Normal",
+                "fr": "Normale",
+                "de": "Normal",
+                "es": "Normal"
+              }
+            },
+            {
+              "value": "fast",
+              "label": {
+                "en": "Fast",
+                "fr": "Rapide",
+                "de": "Schnell",
+                "es": "Rápida"
+              }
+            }
+          ]
+        },
+        {
+          "key": "direction",
+          "type": "select",
+          "label": {
+            "en": "Direction (Move)",
+            "fr": "Sens (Défilement)",
+            "de": "Richtung (Lauflicht)",
+            "es": "Dirección (Desplazamiento)"
+          },
+          "required": false,
+          "default": "right",
+          "options": [
+            {
+              "value": "right",
+              "label": {
+                "en": "Right",
+                "fr": "Droite",
+                "de": "Rechts",
+                "es": "Derecha"
+              }
+            },
+            {
+              "value": "left",
+              "label": {
+                "en": "Left",
+                "fr": "Gauche",
+                "de": "Links",
+                "es": "Izquierda"
+              }
+            }
+          ]
+        },
+        {
+          "key": "palette",
+          "type": "select",
+          "label": {
+            "en": "Colors",
+            "fr": "Couleurs",
+            "de": "Farben",
+            "es": "Colores"
+          },
+          "description": {
+            "en": "Move paints them along the strip, Morph blends them. Flame keeps its own colors.",
+            "fr": "Le défilement les répartit le long du ruban, la morphose les mélange. La flamme garde ses couleurs.",
+            "de": "Das Lauflicht verteilt sie über den Streifen, Morph vermischt sie. Die Flamme behält ihre Farben.",
+            "es": "El desplazamiento los reparte a lo largo de la tira, la transformación los mezcla. La llama mantiene sus colores."
+          },
+          "required": false,
+          "default": "rainbow",
+          "options": [
+            {
+              "value": "rainbow",
+              "label": {
+                "en": "Rainbow",
+                "fr": "Arc-en-ciel",
+                "de": "Regenbogen",
+                "es": "Arcoíris"
+              }
+            },
+            {
+              "value": "fire",
+              "label": {
+                "en": "Fire",
+                "fr": "Feu",
+                "de": "Feuer",
+                "es": "Fuego"
+              }
+            },
+            {
+              "value": "ocean",
+              "label": {
+                "en": "Ocean",
+                "fr": "Océan",
+                "de": "Ozean",
+                "es": "Océano"
+              }
+            },
+            {
+              "value": "forest",
+              "label": {
+                "en": "Forest",
+                "fr": "Forêt",
+                "de": "Wald",
+                "es": "Bosque"
+              }
+            },
+            {
+              "value": "pastel",
+              "label": {
+                "en": "Pastel",
+                "fr": "Pastel",
+                "de": "Pastell",
+                "es": "Pastel"
+              }
+            },
+            {
+              "value": "current",
+              "label": {
+                "en": "Colors already shown (Move)",
+                "fr": "Couleurs déjà affichées (Défilement)",
+                "de": "Bereits gezeigte Farben (Lauflicht)",
+                "es": "Colores ya mostrados (Desplazamiento)"
+              }
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "key": "effect",
+          "type": "string",
+          "label": {
+            "en": "Effect running (move, morph, flame, none)",
+            "fr": "Effet en cours (move, morph, flame, none)",
+            "de": "Laufender Effekt (move, morph, flame, none)",
+            "es": "Efecto en curso (move, morph, flame, none)"
+          }
+        }
+      ]
     }
   ]
 }
