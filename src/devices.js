@@ -271,10 +271,15 @@ export function deviceValues(record) {
   if (!light) {
     return values;
   }
-  values[FEATURE_KEYS.POWER] = light.power > 0 ? 1 : 0;
-  values[FEATURE_KEYS.BRIGHTNESS] = toPercent(light.brightness);
+  // A command on a light never read yet only knows its power.
+  if (isNumber(light.power)) {
+    values[FEATURE_KEYS.POWER] = light.power > 0 ? 1 : 0;
+  }
+  if (isNumber(light.brightness)) {
+    values[FEATURE_KEYS.BRIGHTNESS] = toPercent(light.brightness);
+  }
   const white = !caps.color || isWhite(light);
-  if (caps.color && !white) {
+  if (caps.color && !white && isNumber(light.hue)) {
     values[FEATURE_KEYS.COLOR] = hsbkToRgbInt(light);
   }
   if (caps.temperature && white && isNumber(light.kelvin) && light.kelvin > 0) {

@@ -313,6 +313,27 @@ test('reachability: a light that stops answering is shown off and unreachable, t
   assert.equal(world.fake.connectionStatus.connected, true);
 });
 
+test('a light unreachable when added, then back: a command publishes only what it knows', async (t) => {
+  const world = await createWorld();
+  t.after(() => world.stop());
+  const bulb = world.light;
+  const record = world.hub.records.get(bulb.serial);
+  record.light = null; // never read, as after a restart with the light unplugged
+  bulb.online = false;
+  await world.fake.deviceCreated(world.fake.discoveredDevices[0]);
+  bulb.online = true;
+  const ack = await set(world, bulb, FEATURE_KEYS.POWER, 1);
+  assert.equal(ack.success, true);
+  for (const entry of world.fake.states) {
+    assert.ok(
+      Number.isFinite(entry.state) || typeof entry.text === 'string',
+      JSON.stringify(entry),
+    );
+  }
+  assert.equal(state(world, bulb, FEATURE_KEYS.POWER), 1);
+  assert.equal(state(world, bulb, FEATURE_KEYS.BRIGHTNESS), undefined);
+});
+
 test('a command to a light that does not answer fails with a clear message', async (t) => {
   const world = await createdWorld(t);
   world.light.online = false;
